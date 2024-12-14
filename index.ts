@@ -1,35 +1,38 @@
 import { DepthManager } from "./DepthManager";
+import { cancelAllOrders, createOrder } from "./order";
 
-const solInrMarket = new DepthManager("B-SOL_INR");
+const pepeInrMarket = new DepthManager("B-PEPE_INR");
 const usdInrMarket = new DepthManager("B-USDT_INR");
-const solUsdtMarket = new DepthManager("B-SOL_USDT");
+const pepeUsdtMarket = new DepthManager("B-PEPE_USDT");
 
-const feePercentage = 0.001; // 0.1% trading fee
+const feePercentage = 0.001; // 0.6% trading fee
 
 setInterval(async () => {
   // Fetch all depths at once
-  const solInrDepth = await solInrMarket.getRelevantDepth();
+  const pepeInrDepth = await pepeInrMarket.getRelevantDepth();
   const usdInrDepth = await usdInrMarket.getRelevantDepth();
-  const solUsdtDepth = await solUsdtMarket.getRelevantDepth();
+  const pepeUsdtDepth = await pepeUsdtMarket.getRelevantDepth();
 
   console.log("Market Depths:");
-  console.log("SOL-INR", solInrDepth);
+  console.log("PEPE-INR", pepeInrDepth);
   console.log("USD-INR", usdInrDepth);
-  console.log("SOL-USDT", solUsdtDepth);
+  console.log("PEPE-USDT", pepeUsdtDepth);
   console.log("----");
 
   // Path 1: 1 SOL -> INR -> USDT -> SOL
-  const canGetInr = solInrDepth.lowestAsk * (1 - feePercentage);
+  const canGetInr = pepeInrDepth.lowestAsk * (1 - feePercentage);
   const canGetUsdt = (canGetInr / usdInrDepth.lowestAsk) * (1 - feePercentage);
-  const canGetSol = (canGetUsdt / solUsdtDepth.lowestAsk) * (1 - feePercentage);
+  const canGetSol =
+    (canGetUsdt / pepeUsdtDepth.lowestAsk) * (1 - feePercentage);
 
-  console.log(`Path 1: You can convert 1 SOL into ${canGetSol.toFixed(6)} SOL`);
+  console.log(
+    `Path 1: You can convert 1 PEPE into ${canGetSol.toFixed(6)} PEPE`
+  );
 
   // Path 2: INR -> USDT -> SOL -> INR
-  const initalINR = solInrDepth.highestBid * (1 + feePercentage);
-  const canGetUsdt2 = 1 * usdInrDepth.highestBid * (1 - feePercentage);
-  const canGetInr2 =
-    canGetUsdt2 * solUsdtDepth.highestBid * (1 - feePercentage);
+  const initalINR = pepeInrDepth.highestBid * (1 + feePercentage);
+  const canGetUsdt2 = 1 * pepeUsdtDepth.highestBid * (1 - feePercentage);
+  const canGetInr2 = canGetUsdt2 * usdInrDepth.highestBid * (1 - feePercentage);
 
   console.log(
     `Path 2: You can convert ${initalINR.toFixed(
@@ -47,3 +50,20 @@ setInterval(async () => {
     console.log("Arbitrage opportunity: Path 2 is profitable.");
   }
 }, 5000);
+
+async function main() {
+  const highestBid = (await pepeInrMarket.getRelevantDepth()).highestBid;
+  await createOrder(
+    "buy",
+    "PEPEINR",
+    highestBid + 0.0001,
+    50000,
+    Math.random().toString()
+  );
+  await new Promise((r) => setTimeout(r, 10000));
+  await cancelAllOrders("PEPEINR");
+  await new Promise((r) => setTimeout(r, 10000));
+  main();
+}
+
+setTimeout(main, 1000);
