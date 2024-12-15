@@ -127,7 +127,9 @@ A **crypto arbitrage trading bot** designed to identify and take arbitrage oppor
 ├── 📄 order.ts              # Manages order creation and cancellation.
 ├── 📄 index.ts              # Main entry point for the trading bot.
 ├── 📄 README.md             # Project documentation (this file).
-└── 📄 .gitignore            # Specifies files/folders to ignore in Git.
+├── 📄 .gitignore            # Specifies files/folders to ignore in Git.
+├── 📂 assets/               # Contains project assets.
+    └── 📂 screenshots/      # Screenshots of the bot in action.
 ```
 
 ---
@@ -149,4 +151,5 @@ A **crypto arbitrage trading bot** designed to identify and take arbitrage oppor
 
 ### **Market Monitoring**
 
-![screenshot1](src/assets/screenshots/screenshot1.png)
+![screenshot1](assets/screenshots/screenshot1.png)
+![screenshot2](assets/screenshots/screenshot2.png)
