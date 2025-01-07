@@ -147,7 +147,7 @@ A **crypto arbitrage trading bot** designed to identify and take arbitrage oppor
 
 ---
 
-## Screenshots
+## 🖼️ Screenshots
 
 ### **Market Monitoring**
 
